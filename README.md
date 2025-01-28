@@ -1,36 +1,82 @@
 <div align="center">
-
-#### $`\textcolor{#342ca8}{\text{SCORE PUBLISHER SERVICE}}`$
-
-
-
-[![Golang][golang-shield]][golang-url]
-[![Gin][gin-shield]][gin-url]
-[![GRPC][grpc-shield]][grpc-url]
-[![Pgx][pgx-shield]][pgx-url]
-
+  <h1>SCORE PUBLISHER SERVICE</h1>
 </div>
 
-
-##
-
 ## Overview
+The Score Publisher Service is a real-time service designed to handle score updates and publish them to connected clients via WebSocket. It also provides REST APIs for managing scores and integrates with Kafka for event-driven communication. 
 
+The service is built using:
+- **Golang** for development
+- **Gin** for HTTP routing
+- **Gorilla WebSocket** for real-time communication
+- **PostgreSQL with pgx** for data persistence
+- **JWT** for authentication
+- Deployed using **Kubernetes** and **Helm** for orchestration and management.
+
+---
 
 ## Architecture
 
+The architecture is divided into three main layers:
 
-The architecture can be separated into 3 layers, including  `Service`, `Transport`, and `Repository`.
+### **1. Transport Layer**
+- Handles incoming requests, including HTTP, WebSocket, and gRPC.
+- Manages request routing, authentication (JWT), access control, and parameter validation.
+- Uses **Gin** for REST API routing and **Gorilla WebSocket** for real-time communication.
 
+### **2. Service Layer**
+- Implements the core business logic and use cases.
+- Processes score updates, publishes events to Kafka, and manages real-time WebSocket communication.
 
-- `Transport` handles input request things, such as HTTP, websockets, gRPC request routing, authentication, access control, and parameter validation.
-- `Repository` handle output requests, such as accessing DB, communicate with other services.
-- `Service` handles use cases 
+### **3. Repository Layer**
+- Handles data persistence and external communication.
+- Uses **pgx** to interact with PostgreSQL for database operations.
+- Integrates with **Kafka** for event-driven messaging.
 
+---
 
-<details><summary>Test usage</summary>
-  
-- [testify](https://github.com/stretchr/testify)
-- [mockgen](https://github.com/golang/mock)
+## Tech Stack
+- **Programming Language**: Golang
+- **Web Framework**: Gin
+- **WebSocket Library**: Gorilla WebSocket
+- **Database**: PostgreSQL with pgx
+- **Message Broker**: Kafka
+- **Authentication**: JWT
+- **Deployment**: Kubernetes with Helm
 
-</details>
+---
+
+## Features
+- **Real-Time Score Updates**: Publish score updates to connected clients via WebSocket.
+- **REST API**: Manage scores using RESTful endpoints.
+- **Event-Driven Architecture**: Use Kafka for asynchronous event handling.
+- **Authentication**: Secure endpoints and WebSocket connections using JWT.
+- **Scalability**: Deployed on Kubernetes with Helm for easy scaling and management.
+
+---
+
+## Getting Started
+
+### **Prerequisites**
+- Go 1.22.5
+- PostgreSQL
+- Kafka
+- Kubernetes cluster
+- Helm
+
+---
+
+### **Installation**
+
+#### 1. Clone the repository:
+```bash
+git clone https://github.com/your-repo/score-publisher-service.git
+cd score-publisher-service
+
+#### 2. Install dependencies:
+go mod download
+
+#### 3. Setup env variable:
+
+#### 4. Run the service:
+go run ./cmd/main.go
