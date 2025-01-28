@@ -15,14 +15,14 @@ type KafkaProducer struct {
 func NewKafkaProducer(brokers []string, topic string) (*KafkaProducer, error) {
 
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
-		"bootstrap.servers":                     brokers,
-		"acks":                                  "all",
-		"retries":                               0,
-		"batch.num.messages":                    100,
-		"linger.ms":                             1000,
+		"bootstrap.servers":                     brokers, // broker address
+		"acks":                                  "all",   // waits for acks from all in sync replicas
+		"retries":                               0,       //  number of retry for failed attempts
+		"batch.num.messages":                    100,     // maximum number of messages in batch
+		"linger.ms":                             1000,    // how long producer wait before sending a batch
 		"compression.codec":                     "gzip",
-		"max.in.flight.requests.per.connection": 1,
-		"enable.idempotence":                    true,
+		"max.in.flight.requests.per.connection": 1,    //  for strict ordering
+		"enable.idempotence":                    true, // no duplicate message
 		"transactional.id":                      "myid",
 	})
 	if err != nil {
@@ -47,6 +47,7 @@ func (kp *KafkaProducer) PublishMessage(message []byte) error {
 			Partition: int32(kafka.PartitionAny),
 		},
 		Value: message,
+		Key:   []byte("key-1"),
 	}
 
 	// Send the message

@@ -12,7 +12,7 @@ type PGXDatabase struct {
 }
 
 type PgxRepository interface {
-	UpdateScore(ctx context.Context) error
+	UpdateScore(ctx context.Context, point int64) error
 }
 
 func NewPgxRepository(PgServices PGXDatabase) PgxRepository {
@@ -21,10 +21,10 @@ func NewPgxRepository(PgServices PGXDatabase) PgxRepository {
 	}
 }
 
-func (r *PGXDatabase) UpdateScore(ctx context.Context) error {
+func (r *PGXDatabase) UpdateScore(ctx context.Context, point int64) error {
 
-	query := `INSERT INTO users ( name) VALUES ( $1)`
-	res, err := r.db.Exec(ctx, query, "")
+	query := `INSERT INTO point_table ( score) VALUES (  $1)`
+	res, err := r.db.Exec(ctx, query, point)
 	if err != nil {
 		return err
 	}
