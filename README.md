@@ -69,7 +69,7 @@ The architecture is divided into three main layers:
 ### **Installation**
 
 #### 1. Clone the repository:
-```bash
+```bash ```
 git clone https://github.com/your-repo/score-publisher-service.git
 cd score-publisher-service
 
