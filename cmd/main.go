@@ -28,8 +28,8 @@ func main() {
 	}
 
 	// Kafka configuration
-	brokers := []string{"localhost:9092"}
-	topic := "user-scores"
+	brokers := []string{cfg.KafkaCfg.Broker}
+	topic := cfg.KafkaCfg.Topic
 
 	producer, err := kafka.NewKafkaProducer(brokers, topic)
 	if err != nil {

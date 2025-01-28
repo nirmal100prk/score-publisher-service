@@ -65,7 +65,7 @@ func (h *WebSocketHandler) handleConnection(conn *websocket.Conn) {
 			continue
 		}
 
-		err = conn.WriteMessage(messageType, message)
+		err = conn.WriteMessage(messageType, []byte("success"))
 		if err != nil {
 			log.Printf("Failed to write message: %v", err)
 			break

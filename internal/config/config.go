@@ -18,7 +18,7 @@ type ServiceConfig struct {
 	Host        string
 	Port        int
 	PostgresCfg DbConfig
-	KafkaCfg    KafkaConfig
+	KafkaCfg    Kafka
 }
 
 type DbConfig struct {
@@ -29,7 +29,9 @@ type DbConfig struct {
 	DbName   string
 }
 
-type KafkaConfig struct {
+type Kafka struct {
+	Broker string
+	Topic  string
 }
 
 func NewConfig() (*ServiceConfig, error) {
