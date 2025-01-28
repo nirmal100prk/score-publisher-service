@@ -19,6 +19,12 @@ type ServiceConfig struct {
 	Port        int
 	PostgresCfg DbConfig
 	KafkaCfg    Kafka
+	LoggerCfg Logger
+}
+
+type Logger struct{
+	Level string
+	Format string
 }
 
 type DbConfig struct {

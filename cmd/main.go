@@ -14,6 +14,7 @@ import (
 	"score-publisher-svc/internal/service"
 	"score-publisher-svc/internal/transport/router"
 	"score-publisher-svc/internal/transport/websockets"
+	"score-publisher-svc/pkg/logger"
 	"syscall"
 	"time"
 
@@ -26,6 +27,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
+
+	SetupLogger(cfg)
 
 	// Kafka configuration
 	brokers := []string{cfg.KafkaCfg.Broker}
@@ -60,6 +63,21 @@ func main() {
 	go initGracefulStop(rootCtxCancelFunc, httpServer, producer, pg)
 	<-rootCtx.Done()
 
+}
+
+func SetupLogger(cfg *config.ServiceConfig) {
+	var level slog.Level
+	if cfg.LoggerCfg.Level == "debug" {
+		level = slog.LevelDebug
+	} else {
+		level = slog.LevelInfo
+	}
+	logCfg := logger.Config{
+		Format: cfg.LoggerCfg.Format,
+		Level:  level,
+	}
+	appLogger := logger.NewLogger(logCfg)
+	slog.SetDefault(appLogger)
 }
 
 func NewHTTPServer(cfg *config.ServiceConfig, wsHandler *websockets.WebSocketHandler) (*http.Server, error) {

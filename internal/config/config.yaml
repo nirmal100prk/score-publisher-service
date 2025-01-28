@@ -10,3 +10,6 @@ dbconfig:
 kafka:
   broker: "localhost:9092"
   topic: "user-scores"
+logger:
+  level: INFO
+  format: json
