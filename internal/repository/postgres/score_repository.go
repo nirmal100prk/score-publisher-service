@@ -8,23 +8,23 @@ import (
 )
 
 type PGXDatabase struct {
-	db *pgxpool.Pool
+	Db *pgxpool.Pool
 }
 
 type PgxRepository interface {
-	UpdateScore(ctx context.Context, point int64) error
+	InsertScore(ctx context.Context, point int64) error
 }
 
-func NewPgxRepository(PgServices PGXDatabase) PgxRepository {
+func NewPgxRepository(PgServices *PGXDatabase) PgxRepository {
 	return &PGXDatabase{
-		db: PgServices.db,
+		Db: PgServices.Db,
 	}
 }
 
-func (r *PGXDatabase) UpdateScore(ctx context.Context, point int64) error {
+func (r *PGXDatabase) InsertScore(ctx context.Context, point int64) error {
 
-	query := `INSERT INTO point_table ( score) VALUES (  $1)`
-	res, err := r.db.Exec(ctx, query, point)
+	query := `INSERT INTO scores (score)  VALUES (  $1)`
+	res, err := r.Db.Exec(ctx, query, point)
 	if err != nil {
 		return err
 	}

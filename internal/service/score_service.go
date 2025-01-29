@@ -13,6 +13,6 @@ func NewScoreService(repo postgres.PgxRepository) *ScoreService {
 	return &ScoreService{scoreRepo: repo}
 }
 
-func (s *ScoreService) UpdateScore(ctx context.Context, val int64) error {
-	return s.scoreRepo.UpdateScore(ctx, val)
+func (s *ScoreService) InsertScore(ctx context.Context, val int64) error {
+	return s.scoreRepo.InsertScore(ctx, val)
 }

@@ -1,0 +1,6 @@
+CREATE TABLE scores (
+    id SERIAL PRIMARY KEY,
+    score INT NOT NULL,
+    received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

@@ -1,6 +1,7 @@
 package websockets
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -20,11 +21,13 @@ var upgrader = websocket.Upgrader{
 // WebSocketHandler handles WebSocket connections
 type WebSocketHandler struct {
 	messageService *service.MessageService
+	scoreService   *service.ScoreService
 }
 
-func NewWebSocketHandler(messageService *service.MessageService) *WebSocketHandler {
+func NewWebSocketHandler(messageService *service.MessageService, scoreService *service.ScoreService) *WebSocketHandler {
 	return &WebSocketHandler{
 		messageService: messageService,
+		scoreService:   scoreService,
 	}
 }
 
@@ -70,6 +73,12 @@ func (h *WebSocketHandler) handleConnection(conn *websocket.Conn) {
 		err = h.messageService.PublishMessage(msg)
 		if err != nil {
 			log.Printf("Failed to publish message to Kafka: %v", err)
+			continue
+		}
+
+		err = h.scoreService.InsertScore(context.Background(), int64(msg.Message))
+		if err != nil {
+			log.Printf("Failed to insert score: %v", err)
 			continue
 		}
 

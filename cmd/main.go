@@ -36,15 +36,8 @@ func main() {
 
 	producer, err := kafka.NewKafkaProducer(brokers, topic)
 	if err != nil {
-		slog.Error("error: ", err.Error())
-		//log.Fatalf("Failed to initialize Kafka producer: %v", err)
+		log.Fatalf("Failed to initialize Kafka producer: %v", err)
 	}
-
-	// initialize repository
-	messageService := service.NewMessageRepository(producer)
-
-	// initialize service
-	wsHandler := websockets.NewWebSocketHandler(messageService)
 
 	rootCtx, rootCtxCancelFunc := context.WithCancel(context.Background())
 	defer rootCtxCancelFunc()
@@ -53,6 +46,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
+
+	postgresRepo := postgres.NewPgxRepository(pg)
+
+	// initialize service
+	messageService := service.NewMessageService(producer)
+	scoreService := service.NewScoreService(postgresRepo)
+
+	wsHandler := websockets.NewWebSocketHandler(messageService, scoreService)
 
 	// Initialize HTTP server
 	httpServer, err := NewHTTPServer(cfg, wsHandler)

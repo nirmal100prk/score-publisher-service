@@ -41,7 +41,7 @@ func NewPGXDatabase(ctx context.Context, connString string) (*PGXDatabase, error
 	if err != nil {
 		return nil, err
 	}
-	return &PGXDatabase{db: pool.DB}, nil
+	return &PGXDatabase{Db: pool.DB}, nil
 }
 
 func (r *PGXDatabase) Close() {

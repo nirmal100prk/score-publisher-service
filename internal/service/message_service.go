@@ -11,7 +11,7 @@ type MessageService struct {
 	messageRepo kafka.MessageRepository
 }
 
-func NewMessageRepository(messageRepo kafka.MessageRepository) *MessageService {
+func NewMessageService(messageRepo kafka.MessageRepository) *MessageService {
 	return &MessageService{
 		messageRepo: messageRepo,
 	}
