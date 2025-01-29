@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WebSocket Example</title>
+</head>
+<body>
+  <h1>WebSocket Data Update</h1>
+
+  <!-- Last received message -->
+  <div id="data-container">Waiting for data...</div>
+
+  <!-- Send message UI -->
+  <div style="margin-top: 20px;">
+    <input type="number" id="messageInput" placeholder="Enter an integer" />
+    <button id="sendButton">Send</button>
+  </div>
+
+  <!-- Log of all sent/received messages -->
+  <div id="log" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px; max-width: 400px;">
+    <h3>Message Log:</h3>
+    <!-- Messages will appear here -->
+  </div>
+
+  <script>
+    // Create a new WebSocket connection to your server
+    const socket = new WebSocket('ws://localhost:7001/ws');
+
+    // Grab references to DOM elements
+    const dataContainer = document.getElementById('data-container');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const logDiv = document.getElementById('log');
+
+    // When the connection opens
+    socket.addEventListener('open', (event) => {
+      console.log('WebSocket connection opened:', event);
+      appendLog('WebSocket connection opened.');
+    });
+
+    // When a message is received
+    socket.addEventListener('message', (event) => {
+      console.log('Message from server:', event.data);
+
+      // Show the last received message in #data-container
+      dataContainer.textContent = event.data;
+
+      // Also log it
+      appendLog(`Received: ${event.data}`);
+    });
+
+    // Handle WebSocket errors
+    socket.addEventListener('error', (event) => {
+      console.error('WebSocket error:', event);
+      appendLog('WebSocket error: ' + JSON.stringify(event));
+    });
+
+    // When the connection is closed
+    socket.addEventListener('close', (event) => {
+      console.log('WebSocket connection closed:', event);
+      appendLog('WebSocket connection closed.');
+    });
+
+    // Click handler for Send button
+    sendButton.addEventListener('click', () => {
+            const messageToSend = messageInput.value.trim();
+            const parsedInt = parseInt(messageToSend, 10);
+            if (!isNaN(parsedInt)) {
+                // Create a JSON object
+                const jsonMessage = JSON.stringify({ message: parsedInt });
+                
+                // Send the JSON message over the WebSocket
+                socket.send(jsonMessage);
+
+                // Log that we sent it
+                console.log(`Sent: ${jsonMessage}`);
+
+                // Clear the input
+                messageInput.value = '';
+            } else {
+                console.error("Invalid input: Please enter a valid integer");
+            }
+        });
+
+    // Helper function to append a line to the log
+    function appendLog(message) {
+      const p = document.createElement('p');
+      p.textContent = message;
+      logDiv.appendChild(p);
+    }
+  </script>
+</body>
+</html>

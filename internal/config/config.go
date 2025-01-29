@@ -10,24 +10,24 @@ import (
 )
 
 const (
-	DEFAULT_CONFIG_FILE = "../internal/config/config.yaml"
+	DEFAULT_CONFIG_FILE = "./internal/config/config.yaml"
 )
 
 type ServiceConfig struct {
-	Name        string
-	Host        string
-	Port        int
-	PostgresCfg DbConfig
-	KafkaCfg    Kafka
-	LoggerCfg Logger
+	Name     string
+	Host     string
+	Port     int
+	DbConfig PostgresCfg
+	Kafka    KafkaCfg
+	Logger   LoggerCfg
 }
 
-type Logger struct{
-	Level string
+type LoggerCfg struct {
+	Level  string
 	Format string
 }
 
-type DbConfig struct {
+type PostgresCfg struct {
 	Host     string
 	Port     int
 	Username string
@@ -35,7 +35,7 @@ type DbConfig struct {
 	DbName   string
 }
 
-type Kafka struct {
+type KafkaCfg struct {
 	Broker string
 	Topic  string
 }

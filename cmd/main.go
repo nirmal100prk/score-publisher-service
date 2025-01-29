@@ -31,12 +31,13 @@ func main() {
 	SetupLogger(cfg)
 
 	// Kafka configuration
-	brokers := []string{cfg.KafkaCfg.Broker}
-	topic := cfg.KafkaCfg.Topic
+	brokers := []string{cfg.Kafka.Broker}
+	topic := cfg.Kafka.Topic
 
 	producer, err := kafka.NewKafkaProducer(brokers, topic)
 	if err != nil {
-		log.Fatalf("Failed to initialize Kafka producer: %v", err)
+		slog.Error("error: ", err.Error())
+		//log.Fatalf("Failed to initialize Kafka producer: %v", err)
 	}
 
 	// initialize repository
@@ -67,13 +68,13 @@ func main() {
 
 func SetupLogger(cfg *config.ServiceConfig) {
 	var level slog.Level
-	if cfg.LoggerCfg.Level == "debug" {
+	if cfg.Logger.Level == "debug" {
 		level = slog.LevelDebug
 	} else {
 		level = slog.LevelInfo
 	}
 	logCfg := logger.Config{
-		Format: cfg.LoggerCfg.Format,
+		Format: cfg.Logger.Format,
 		Level:  level,
 	}
 	appLogger := logger.NewLogger(logCfg)
@@ -135,11 +136,11 @@ func initGracefulStop(rootCtxCancelFunc context.CancelFunc, httpServer *http.Ser
 func constructPostgresURL(dbConfig *config.ServiceConfig) string {
 	return fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
-		dbConfig.PostgresCfg.Username,
-		dbConfig.PostgresCfg.Password,
-		dbConfig.PostgresCfg.Host,
-		dbConfig.PostgresCfg.Port,
-		dbConfig.PostgresCfg.DbName,
+		dbConfig.DbConfig.Username,
+		dbConfig.DbConfig.Password,
+		dbConfig.DbConfig.Host,
+		dbConfig.DbConfig.Port,
+		dbConfig.DbConfig.DbName,
 		false,
 	)
 }

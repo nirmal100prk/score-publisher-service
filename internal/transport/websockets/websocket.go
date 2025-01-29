@@ -1,8 +1,10 @@
 package websockets
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+	"score-publisher-svc/internal/models"
 	"score-publisher-svc/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +49,7 @@ func (h *WebSocketHandler) handleConnection(conn *websocket.Conn) {
 	}()
 
 	for {
-		messageType, message, err := conn.ReadMessage()
+		messageType, msgBytes, err := conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("WebSocket error: %v", err)
@@ -55,11 +57,17 @@ func (h *WebSocketHandler) handleConnection(conn *websocket.Conn) {
 			break
 		}
 
-		log.Printf("Message received: %s", string(message))
+		log.Printf("Message received: %s", string(msgBytes))
 
+		msg := models.Message{}
+		err = json.Unmarshal(msgBytes, &msg)
+		if err != nil {
+			log.Printf("Error unmarshalling message: %v", err)
+			continue
+		}
 		// publish message to kafka
 		// Publish the message to Kafka using MessageService
-		err = h.messageService.PublishMessage(string(message))
+		err = h.messageService.PublishMessage(msg)
 		if err != nil {
 			log.Printf("Failed to publish message to Kafka: %v", err)
 			continue

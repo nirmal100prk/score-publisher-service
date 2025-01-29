@@ -3,7 +3,7 @@
 </div>
 
 ## Overview
-The Score Publisher Service is a real-time service designed to handle score updates and publish them to connected clients via WebSocket. It also provides REST APIs for managing scores and integrates with Kafka for event-driven communication. 
+The Score Publisher Service is a real-time service designed to handle score update from client and publish to kafka broker.  
 
 The service is built using:
 - **Golang** for development

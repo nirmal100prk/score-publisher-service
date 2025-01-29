@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"log"
+	"score-publisher-svc/internal/models"
 	"score-publisher-svc/internal/repository/kafka"
 )
 
@@ -16,7 +17,8 @@ func NewMessageRepository(messageRepo kafka.MessageRepository) *MessageService {
 	}
 }
 
-func (s *MessageService) PublishMessage(message any) error {
+func (s *MessageService) PublishMessage(message models.Message) error {
+
 	msgBytes, err := json.Marshal(message)
 	if err != nil {
 		return err
