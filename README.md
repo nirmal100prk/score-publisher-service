@@ -11,8 +11,7 @@ The service is built using:
 - **Gorilla WebSocket** for real-time communication
 - **PostgreSQL with pgx** for data persistence
 - **JWT** for authentication
-- Deployed using **Kubernetes** and **Helm** for orchestration and management.
-
+- **Testify** for testing
 ---
 
 ## Architecture
@@ -42,7 +41,6 @@ The architecture is divided into three main layers:
 - **Database**: PostgreSQL with pgx
 - **Message Broker**: Kafka
 - **Authentication**: JWT
-- **Deployment**: Kubernetes with Helm
 
 ---
 
@@ -51,7 +49,6 @@ The architecture is divided into three main layers:
 - **REST API**: Manage scores using RESTful endpoints.
 - **Event-Driven Architecture**: Use Kafka for asynchronous event handling.
 - **Authentication**: Secure endpoints and WebSocket connections using JWT.
-- **Scalability**: Deployed on Kubernetes with Helm for easy scaling and management.
 
 ---
 
@@ -61,8 +58,6 @@ The architecture is divided into three main layers:
 - Go 1.22.5
 - PostgreSQL
 - Kafka
-- Kubernetes cluster
-- Helm
 
 ---
 
@@ -70,7 +65,7 @@ The architecture is divided into three main layers:
 
 #### 1. Clone the repository:
 ```bash ```
-git clone https://github.com/your-repo/score-publisher-service.git
+git clone https://github.com/nirmal100prk/score-publisher-service.git
 cd score-publisher-service
 
 #### 2. Install dependencies:
