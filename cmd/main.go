@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"score-publisher-svc/internal/config"
+	"score-publisher-svc/internal/repository/datastore"
 	"score-publisher-svc/internal/repository/kafka"
 	"score-publisher-svc/internal/repository/postgres"
 	"score-publisher-svc/internal/service"
@@ -42,27 +43,38 @@ func main() {
 	rootCtx, rootCtxCancelFunc := context.WithCancel(context.Background())
 	defer rootCtxCancelFunc()
 
-	pg, err := postgres.NewPGXDatabase(rootCtx, constructPostgresURL(cfg))
+	// initialize postgreSQL database connection
+	dbclient, err := postgres.New(rootCtx, constructPostgresURL(cfg))
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
-	postgresRepo := postgres.NewPgxRepository(pg)
+	// initialize db abstraction layer to interact with database
+	dataRepo := postgres.NewDatabaseProvider(dbclient)
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
 
-	// initialize service
+	// initialize repository layer that encapsulates db operations
+	postgresRepo := datastore.NewDataRepository(dataRepo)
+
+	// initialize the message service
 	messageService := service.NewMessageService(producer)
+
+	// initialize the score service
 	scoreService := service.NewScoreService(postgresRepo)
 
+	// initialize the websocket handler
 	wsHandler := websockets.NewWebSocketHandler(messageService, scoreService)
 
-	// Initialize HTTP server
+	// initialize HTTP server
 	httpServer, err := NewHTTPServer(cfg, wsHandler)
 	if err != nil {
 		log.Fatalf("Failed to initialize HTTP server: %v", err)
 	}
 
 	// Graceful shutdown
-	go initGracefulStop(rootCtxCancelFunc, httpServer, producer, pg)
+	go initGracefulStop(rootCtxCancelFunc, httpServer, producer, dbclient)
 	<-rootCtx.Done()
 
 }
@@ -110,7 +122,7 @@ func NewHTTPServer(cfg *config.ServiceConfig, wsHandler *websockets.WebSocketHan
 }
 
 // initGracefulStop handles graceful shutdown
-func initGracefulStop(rootCtxCancelFunc context.CancelFunc, httpServer *http.Server, producer *kafka.KafkaProducer, pg *postgres.PGXDatabase) {
+func initGracefulStop(rootCtxCancelFunc context.CancelFunc, httpServer *http.Server, producer *kafka.KafkaProducer, pg *postgres.Client) {
 	// Wait for stop signal
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
@@ -129,6 +141,7 @@ func initGracefulStop(rootCtxCancelFunc context.CancelFunc, httpServer *http.Ser
 	producer.CloseConnection()
 
 	pg.Close()
+
 	// Cancel root context
 	rootCtxCancelFunc()
 	slog.Info("Service stopped successfully")

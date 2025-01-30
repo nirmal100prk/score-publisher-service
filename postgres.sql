@@ -4,3 +4,4 @@ CREATE TABLE scores (
     received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+SELECT * FROM scores;
