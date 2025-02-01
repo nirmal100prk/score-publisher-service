@@ -25,7 +25,7 @@ The architecture is divided into three main layers:
 
 ### **2. Service Layer**
 - Implements the core business logic and use cases.
-- Processes score updates, publishes events to Kafka, and manages real-time WebSocket communication.
+- Processes score updates, publishes events to Kafka.
 
 ### **3. Repository Layer**
 - Handles data persistence and external communication.
