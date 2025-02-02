@@ -75,6 +75,8 @@ func main() {
 
 	// Graceful shutdown
 	go initGracefulStop(rootCtxCancelFunc, httpServer, producer, dbclient)
+
+// by blocking the main goroutine, the program ensures all clean up tasks are performed.
 	<-rootCtx.Done()
 
 }
@@ -122,6 +124,9 @@ func NewHTTPServer(cfg *config.ServiceConfig, wsHandler *websockets.WebSocketHan
 }
 
 // initGracefulStop handles graceful shutdown
+// triggered by a shutdown signal, once the signal is received rootCtxCancelFunc is called which cancels the rootCtx
+// this unblocks <-rootCtx.Done(), allowing the program to shutdown.
+// by blocking the main goroutine, the program ensures all clean up tasks are performed.
 func initGracefulStop(rootCtxCancelFunc context.CancelFunc, httpServer *http.Server, producer *kafka.KafkaProducer, pg *postgres.Client) {
 	// Wait for stop signal
 	signals := make(chan os.Signal, 1)
